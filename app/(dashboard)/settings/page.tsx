@@ -13,6 +13,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { DEFAULT_CATEGORIES } from '@/lib/constants/categories';
 import { User, Settings as SettingsIcon, CreditCard } from 'lucide-react';
+import { CurrencySelector } from '@/components/settings/CurrencySelector';
+
 
 export default function SettingsPage() {
   const { user } = useAuth();
@@ -122,10 +124,10 @@ export default function SettingsPage() {
             <div>
               <p className="font-medium">Devise</p>
               <p className="text-sm text-muted-foreground">
-                Devise utilisée pour l&apos;affichage (par défaut: Euro)
+                Devise utilisée pour l&apos;affichage des montants
               </p>
             </div>
-            <div className="font-mono bg-muted px-3 py-1 rounded">EUR (€)</div>
+            <CurrencySelector />
           </div>
           <Separator />
           <div className="flex items-center justify-between p-2">

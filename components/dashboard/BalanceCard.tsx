@@ -3,6 +3,8 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatCurrency } from '@/lib/utils/formatters';
+import { useCurrency } from '@/contexts/CurrencyContext';
+
 
 interface BalanceCardProps {
   balance: number;
@@ -10,6 +12,7 @@ interface BalanceCardProps {
 
 const BalanceCard: React.FC<BalanceCardProps> = ({ balance }) => {
   const isPositive = balance >= 0;
+  const { currency } = useCurrency();
 
   return (
     <Card className="bg-gradient-to-br from-primary to-primary/90 text-primary-foreground border-none shadow-lg">
@@ -21,7 +24,7 @@ const BalanceCard: React.FC<BalanceCardProps> = ({ balance }) => {
       <CardContent>
         <div className="flex items-baseline justify-between">
           <h2 className="text-4xl font-bold tracking-tight">
-            {formatCurrency(balance)}
+            {formatCurrency(balance, currency)}
           </h2>
           <span className="text-3xl filter drop-shadow-md">
             {isPositive ? '🤑' : '💸'}

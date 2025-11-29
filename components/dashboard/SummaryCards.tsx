@@ -4,6 +4,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatCurrency } from '@/lib/utils/formatters';
 import { ArrowDownCircle, ArrowUpCircle } from 'lucide-react';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 interface SummaryCardsProps {
   totalIncome: number;
@@ -14,6 +15,8 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({
   totalIncome,
   totalExpenses,
 }) => {
+  const { currency } = useCurrency();
+  
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <Card className="border-l-4 border-l-income shadow-sm hover:shadow-md transition-shadow">
@@ -23,7 +26,7 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-income">
-            +{formatCurrency(totalIncome)}
+            +{formatCurrency(totalIncome, currency)}
           </div>
           <p className="text-xs text-muted-foreground">
             Total des entrées ce mois
@@ -38,7 +41,7 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-expense">
-            -{formatCurrency(totalExpenses)}
+            -{formatCurrency(totalExpenses, currency)}
           </div>
           <p className="text-xs text-muted-foreground">
             Total des sorties ce mois

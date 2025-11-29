@@ -18,12 +18,15 @@ import {
 } from 'recharts';
 import { CategorySummary } from '@/types';
 import { formatCurrency } from '@/lib/utils/formatters';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 interface CategoryChartProps {
   categories: CategorySummary[];
 }
 
 const CategoryChart: React.FC<CategoryChartProps> = ({ categories }) => {
+  const { currency } = useCurrency();
+  
   if (categories.length === 0) {
     return (
       <Card className="h-full min-h-[400px] flex flex-col items-center justify-center text-center p-6">
@@ -70,7 +73,7 @@ const CategoryChart: React.FC<CategoryChartProps> = ({ categories }) => {
                 ))}
               </Pie>
               <Tooltip
-                formatter={(value: number) => formatCurrency(value)}
+                formatter={(value: number) => formatCurrency(value, currency)}
                 contentStyle={{
                   backgroundColor: 'var(--card)',
                   borderColor: 'var(--border)',

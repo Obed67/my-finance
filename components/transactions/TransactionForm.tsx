@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
@@ -13,7 +14,8 @@ import {
 } from '@/components/ui/select';
 import { Transaction } from '@/types';
 import { DEFAULT_CATEGORIES } from '@/lib/constants/categories';
-import { Loader2 } from 'lucide-react';
+import { Loader2, TrendingUp, TrendingDown } from 'lucide-react';
+import { useCurrency, CURRENCY_INFO } from '@/contexts/CurrencyContext';
 
 interface TransactionFormProps {
   initialData?: Transaction;
@@ -26,6 +28,9 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   onSubmit,
   onCancel,
 }) => {
+  const { currency } = useCurrency();
+  const currencySymbol = CURRENCY_INFO[currency].symbol;
+  
   const [type, setType] = useState<'income' | 'expense'>(
     initialData?.type || 'expense'
   );
@@ -80,50 +85,64 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     }
   };
 
+  const filteredCategories = DEFAULT_CATEGORIES.filter((cat) => cat.type === type);
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6 py-4">
       {error && (
-        <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md">
+        <div className="p-4 text-sm text-destructive bg-destructive/10 rounded-lg border border-destructive/20">
           {error}
         </div>
       )}
 
-      <div className="space-y-2">
-        <Label>Type de transaction</Label>
-        <div className="flex gap-4">
+      {/* Type Selection */}
+      <div className="space-y-3">
+        <Label className="text-base font-semibold">Type de transaction</Label>
+        <div className="grid grid-cols-2 gap-3">
           <Button
             type="button"
             variant={type === 'expense' ? 'default' : 'outline'}
-            className={`flex-1 ${
-              type === 'expense' ? 'bg-expense hover:bg-expense/90' : ''
+            className={`h-14 text-base font-medium transition-all ${
+              type === 'expense' 
+                ? 'bg-expense hover:bg-expense/90 text-white' 
+                : 'hover:bg-expense/10 hover:text-expense hover:border-expense'
             }`}
             onClick={() => setType('expense')}
           >
+            <TrendingDown className="mr-2 h-5 w-5" />
             Dépense
           </Button>
           <Button
             type="button"
             variant={type === 'income' ? 'default' : 'outline'}
-            className={`flex-1 ${
-              type === 'income' ? 'bg-income hover:bg-income/90' : ''
+            className={`h-14 text-base font-medium transition-all ${
+              type === 'income' 
+                ? 'bg-income hover:bg-income/90 text-white' 
+                : 'hover:bg-income/10 hover:text-income hover:border-income'
             }`}
             onClick={() => setType('income')}
           >
+            <TrendingUp className="mr-2 h-5 w-5" />
             Revenu
           </Button>
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="amount">Montant</Label>
+      {/* Amount */}
+      <div className="space-y-3">
+        <Label htmlFor="amount" className="text-base font-semibold">
+          Montant <span className="text-destructive">*</span>
+        </Label>
         <div className="relative">
-          <span className="absolute left-3 top-2.5 text-muted-foreground">€</span>
+          <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground font-semibold text-lg">
+            {currencySymbol}
+          </span>
           <Input
             id="amount"
             type="number"
             step="0.01"
             placeholder="0.00"
-            className="pl-8"
+            className={`h-14 text-lg font-medium ${currency === 'XAF' ? 'pl-20' : 'pl-12'}`}
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             required
@@ -131,18 +150,21 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="category">Catégorie</Label>
-        <Select value={category} onValueChange={setCategory}>
-          <SelectTrigger>
+      {/* Category */}
+      <div className="space-y-3">
+        <Label htmlFor="category" className="text-base font-semibold">
+          Catégorie <span className="text-destructive">*</span>
+        </Label>
+        <Select value={category} onValueChange={setCategory} required>
+          <SelectTrigger className="h-14 text-base">
             <SelectValue placeholder="Sélectionner une catégorie" />
           </SelectTrigger>
           <SelectContent>
-            {DEFAULT_CATEGORIES.map((cat) => (
-              <SelectItem key={cat.id} value={cat.id}>
-                <span className="flex items-center gap-2">
-                  <span>{cat.icon}</span>
-                  <span>{cat.name}</span>
+            {filteredCategories.map((cat) => (
+              <SelectItem key={cat.id} value={cat.id} className="text-base py-3">
+                <span className="flex items-center gap-3">
+                  <span className="text-2xl">{cat.icon}</span>
+                  <span className="font-medium">{cat.name}</span>
                 </span>
               </SelectItem>
             ))}
@@ -150,40 +172,52 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         </Select>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="date">Date</Label>
+      {/* Date */}
+      <div className="space-y-3">
+        <Label htmlFor="date" className="text-base font-semibold">
+          Date <span className="text-destructive">*</span>
+        </Label>
         <Input
           id="date"
           type="date"
+          className="h-14 text-base"
           value={date}
           onChange={(e) => setDate(e.target.value)}
           required
         />
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="description">Description (optionnel)</Label>
-        <Input
+      {/* Description */}
+      <div className="space-y-3">
+        <Label htmlFor="description" className="text-base font-semibold">
+          Description <span className="text-muted-foreground text-sm font-normal">(optionnel)</span>
+        </Label>
+        <Textarea
           id="description"
-          type="text"
-          placeholder="Ex: Courses, Loyer..."
+          placeholder="Ex: Courses du mois, Loyer, Salaire..."
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          className="min-h-[100px] text-base resize-none"
         />
       </div>
 
-      <div className="flex gap-3 pt-4">
+      {/* Actions */}
+      <div className="flex flex-col-reverse sm:flex-row gap-3 pt-4">
         <Button
           type="button"
           variant="outline"
-          className="flex-1"
+          className="flex-1 h-12 text-base"
           onClick={onCancel}
           disabled={loading}
         >
           Annuler
         </Button>
-        <Button type="submit" className="flex-1" disabled={loading}>
-          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        <Button 
+          type="submit" 
+          className="flex-1 h-12 text-base font-semibold" 
+          disabled={loading}
+        >
+          {loading && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
           {initialData ? 'Modifier' : 'Ajouter'}
         </Button>
       </div>

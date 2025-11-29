@@ -23,6 +23,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { toast } from 'sonner';
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -55,11 +56,14 @@ export function Sidebar({ className }: SidebarProps) {
   const handleLogout = async () => {
     try {
       await logOut();
+      toast.success('Déconnexion réussie');
       router.push('/login');
     } catch (error) {
       console.error('Error logging out:', error);
+      toast.error('Erreur lors de la déconnexion');
     }
   };
+
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
@@ -101,7 +105,7 @@ export function Sidebar({ className }: SidebarProps) {
       </div>
 
       {/* Navigation */}
-      <div className="flex-1 px-3 space-y-1">
+      <div className="flex-1 px-3 space-y-2">
         <TooltipProvider delayDuration={0}>
           {routes.map((route) => (
             <Tooltip key={route.href}>
@@ -139,7 +143,7 @@ export function Sidebar({ className }: SidebarProps) {
               <Button
                 variant="ghost"
                 className={cn(
-                  'w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10',
+                  'w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10 border border-destructive/30',
                   isCollapsed ? 'justify-center px-2' : 'px-4'
                 )}
                 onClick={handleLogout}
@@ -189,9 +193,11 @@ export function MobileSidebar() {
   const handleLogout = async () => {
     try {
       await logOut();
+      toast.success('Déconnexion réussie');
       router.push('/login');
     } catch (error) {
       console.error('Error logging out:', error);
+      toast.error('Erreur lors de la déconnexion');
     }
   };
 
@@ -210,7 +216,7 @@ export function MobileSidebar() {
             </h2>
           </div>
           
-          <div className="flex-1 px-3 space-y-1">
+          <div className="flex-1 px-3 space-y-2">
             {routes.map((route) => (
               <Button
                 key={route.href}
@@ -233,7 +239,7 @@ export function MobileSidebar() {
           <div className="p-4 mt-auto mb-4 border-t">
             <Button
               variant="ghost"
-              className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10 text-lg h-12"
+              className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10 text-lg h-12 border border-destructive/30"
               onClick={() => {
                 setOpen(false);
                 handleLogout();

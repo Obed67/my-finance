@@ -14,6 +14,7 @@ import { formatCurrency, formatRelativeDate } from '@/lib/utils/formatters';
 import { getCategoryById } from '@/lib/constants/categories';
 import { useRouter } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 interface RecentTransactionsProps {
   transactions: Transaction[];
@@ -23,6 +24,8 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({
   transactions,
 }) => {
   const router = useRouter();
+  const { currency } = useCurrency();
+
 
   return (
     <Card className="h-full shadow-sm hover:shadow-md transition-shadow">
@@ -75,7 +78,7 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({
                     }`}
                   >
                     {isIncome ? '+' : '-'}
-                    {formatCurrency(transaction.amount)}
+                    {formatCurrency(transaction.amount, currency)}
                   </div>
                 </div>
               );

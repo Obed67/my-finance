@@ -7,6 +7,7 @@ import { Transaction } from '@/types';
 import { formatCurrency, formatDate } from '@/lib/utils/formatters';
 import { getCategoryById } from '@/lib/constants/categories';
 import { Pencil, Trash2, Inbox } from 'lucide-react';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 interface TransactionListProps {
   transactions: Transaction[];
@@ -19,6 +20,8 @@ const TransactionList: React.FC<TransactionListProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const { currency } = useCurrency();
+  
   if (transactions.length === 0) {
     return (
       <Card className="border-dashed">
@@ -73,7 +76,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
                     }`}
                   >
                     {isIncome ? '+' : '-'}
-                    {formatCurrency(transaction.amount)}
+                    {formatCurrency(transaction.amount, currency)}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {isIncome ? 'Revenu' : 'Dépense'}

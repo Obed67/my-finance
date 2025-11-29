@@ -73,15 +73,16 @@ export const getTransactions = async (
         amount: data.amount,
         type: data.type,
         category: data.category,
-        date: data.date.toDate(),
+        date: data.date?.toDate ? data.date.toDate() : new Date(data.date),
         description: data.description,
-        createdAt: data.createdAt.toDate(),
-        updatedAt: data.updatedAt.toDate(),
+        createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt),
+        updatedAt: data.updatedAt?.toDate ? data.updatedAt.toDate() : new Date(data.updatedAt),
       });
     });
 
     return transactions;
   } catch (error: any) {
+    console.error('Error fetching transactions:', error);
     throw new Error(error.message || 'Erreur lors de la récupération des transactions');
   }
 };
@@ -102,14 +103,15 @@ export const getTransactionById = async (
         amount: data.amount,
         type: data.type,
         category: data.category,
-        date: data.date.toDate(),
+        date: data.date?.toDate ? data.date.toDate() : new Date(data.date),
         description: data.description,
-        createdAt: data.createdAt.toDate(),
-        updatedAt: data.updatedAt.toDate(),
+        createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt),
+        updatedAt: data.updatedAt?.toDate ? data.updatedAt.toDate() : new Date(data.updatedAt),
       };
     }
     return null;
   } catch (error: any) {
+    console.error('Error fetching transaction:', error);
     throw new Error(error.message || 'Erreur lors de la récupération de la transaction');
   }
 };
